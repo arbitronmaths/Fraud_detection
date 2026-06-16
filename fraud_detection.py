@@ -51,7 +51,7 @@ if page == "Prediction":
 
     st.divider()
     
-    transaction_type = st.selectbox("Transaction Type", ["PAYMENT", "TRANSFER","CASH_OUT","DEPOSIT"])
+    transaction_type = st.selectbox("Transaction Type", ["PAYMENT", "TRANSFER","CASH_OUT","DEBIT"])
     amount = st.number_input("Amount", min_value=0.0, value = 1000.0)
     oldbalanceOrg = st.number_input("Old Balance (Sender)", min_value = 0.0, value=10000.0)
     newbalanceOrig = st.number_input("New Balance (Sender)", min_value = 0.0, value=9000.0)
@@ -67,6 +67,13 @@ if page == "Prediction":
             "oldbalanceDest": oldbalanceDest,
             "newbalanceDest": newbalanceDest
         }])
+        input_data["balanceDiffOrig"] = input_data["oldbalanceOrg"] 
+        - input_data["amount"] 
+        - input_data["newbalanceOrig"]
+
+        input_data["balanceDiffDest"] = input_data["newbalanceDest"]
+        - input_data["amount"]
+        - input_data["oldbalanceDest"]
         
         prediction = model.predict(input_data)[0]
 
@@ -131,8 +138,17 @@ else:
 
         fraud_count = history["prediction"].value_counts()
 
+        #bar chart
         fig, ax = plt.subplots()
         fraud_count.plot(kind="bar", ax=ax)
 
+        ax.set_title("Fraudulent vs Non-Fraudulent Predictions")
+
         st.pyplot(fig)
 
+        #pie chart transaction type distribution
+        transaction_type_count = history[history["prediction"]==1]["transaction_type"].value_counts()
+        fig2, ax2 = plt.subplots()
+        transaction_type_count.plot(kind="pie", ax=ax2, autopct='%1.1f%%', startangle=90)
+        ax2.set_title("Transaction Type Distribution")
+        st.pyplot(fig2)
