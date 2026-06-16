@@ -8,6 +8,9 @@ used in case of binary outputs i.e either fraud or not fraud\
 Random forest accuracy 99%\
 logistic Regression accuracy 94%
 
+# Database Used
+SQLlite
+
 # RUN COMMAND : 
 streamlit run fraud_detection.py
 # Install all requirements
